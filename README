@@ -1,0 +1,77 @@
+(Si se va a leer el codigo completo re comiendo este orden: include, db.h, estructuras [la carpeta de helpers
+y las clases de esta carpeta se pueden ignorar].
+seguido de src, db, clases [Cliente, Domiciliario, Restaurante, Pedido, Zona], helpers, test, por ultimo el main.)
+
+SISTEMA DE GESTIÓN DE PEDIDOS A DOMICILIO
+
+DESCRIPCIÓN DEL SISTEMA
+El sistema simula el ciclo de vida completo de un pedido, desde su creación en un restaurante hasta su entrega final por un domiciliario.
+Se basa en el uso de estructuras de datos dinámicas para gestionar las relaciones complejas entre clientes, restaurantes, zonas y el flujo de los pedidos.
+
+ROLES Y ENTIDADES PRINCIPALES
+
+1.  Entidad: Restaurante
+    Propósito: Ofrece menú y ubicación (Zona).
+    Estructura de Almacenamiento: Árbol Binario de Búsqueda (ArbolBB) por código.
+
+2.  Entidad: Cliente
+    Propósito: Realiza pedidos y mantiene un registro de su historial.
+    Estructura de Almacenamiento: Lista Doble (ListaDoble).
+
+3.  Entidad: Domiciliario
+    Propósito: Transporta pedidos, gestiona disponibilidad y velocidad.
+    Estructura de Almacenamiento: Lista Doble (ListaDoble).
+
+4.  Entidad: Zona
+    Propósito: Representa ubicaciones geográficas. Sus vecinos modelan un Grafo.
+    Estructura de Almacenamiento: Lista Circular (ListaCircular) interna para gestionar vecinos.
+
+5.  Entidad: Pedido
+    Propósito: El objeto transaccional central con estados y asignaciones.
+    Estructura de Almacenamiento: Cola (Cola) para pedidos activos.
+
+6.  Entidad: Historial
+    Propósito: Registro de acciones para la funcionalidad de cancelación.
+    Estructura de Almacenamiento: Pila (Pila).
+
+INSTRUCCIONES DE USO
+El sistema opera a través de una interfaz de consola y sigue un flujo de trabajo predefinido:
+
+1.  Carga Inicial: Al iniciar, la clase DB carga automáticamente Zonas, Domiciliarios, Restaurantes y Clientes de ejemplo.
+2.  Menú Principal: Se presenta el menú con las siguientes opciones clave:
+
+<!-- end list -->
+  * Crear nuevo pedido (Opción 3): Permite a un cliente seleccionar un restaurante y sus ítems, encolando el pedido (enqueue).
+  * Procesar siguiente pedido (Opción 4):
+      * Desencola el pedido activo (dequeue).
+      * Busca y asigna al domiciliario óptimo (ver Decisiones Técnicas).
+      * Asigna el restaurante y actualiza el estado del pedido.
+  * Entregar pedido (Opción 5): Finaliza el ciclo, asignando el pedido a la lista de entregados.
+  * Cancelar último pedido (Opción 6): Utiliza la Pila de acciones para revertir el estado de la última operación significativa.
+
+DECISIONES Y JUSTIFICACIONES TÉCNICAS
+Las siguientes estructuras y lógicas fueron elegidas para optimizar la funcionalidad requerida:
+
+1.  Gestión de Entidades y Búsqueda Rápida
+    Estructura: ArbolBB\<Restaurante\*\>
+    Justificación: Permite la búsqueda rápida de restaurantes por su código (O(log n)) y la iteración ordenada de todos los disponibles.
+Estructura: ListaDoble
+Justificación: Utilizada para colecciones planas (Clientes, Domiciliarios) que requieren iteración completa y eficiente inserción/eliminación en cualquier punto (e.g., eliminando un domiciliario por su puntero).
+
+2.  Flujo de Pedidos y Trazabilidad
+    Estructura: Cola\<Pedido\*\>
+    Justificación: El flujo de pedidos activos es estricamente FIFO (First-In, First-Out). El primer pedido creado es el primero en ser procesado.
+Estructura: Pila\<string\>
+Justificación: La Pila de acciones se utiliza para la función "Deshacer" (Cancelar). Como el último pedido procesado es el primero en poder ser cancelado, se utiliza una lógica LIFO (Last-In, First-Out) para la reversión de estados.
+
+3.  Algoritmo de Asignación del Domiciliario (Optimización)
+    La asignación del domiciliario en el procesamiento del pedido se basa en un algoritmo de optimización de tiempo:
+4.  Filtro: Solo se consideran domiciliarios con el estado disponible = true.
+5.  Cálculo de Distancia: Se utiliza la estructura de Zonas (simulando un grafo) y la función calcularDistancia para obtener la ruta del Domiciliario al Restaurante.
+6.  Cálculo de Tiempo (ETA): El tiempo se calcula usando la fórmula: Tiempo = Distancia x FactorVelocidad. El FactorVelocidad es inherente a cada tipo de vehículo.
+7.  Selección: Se elige al domiciliario que arroje el menor Tiempo Estimado de Llegada (ETA) al restaurante, minimizando el tiempo de espera del pedido.
+8.  Modelado de Zonas (Grafo)
+    La clase Zona utiliza una Lista Circular para almacenar a sus vecinos, junto con la distancia (peso) a cada uno. Esta estructura simple permite modelar las adyacencias de una red geográfica, habilitando la función calcularDistancia.
+
+(Las Estrcuturas cuentan con la documentacion en sus Metodos y se eliminaron los metodos [vistos en clases
+presenciales o desarrollados a modo de estudio] que no se usaron en el codigo)
