@@ -1,10 +1,10 @@
-(Si se va a leer el codigo completo re comiendo este orden: include, db.h, estructuras [la carpeta de helpers
-y las clases de esta carpeta se pueden ignorar].
-seguido de src, db, clases [Cliente, Domiciliario, Restaurante, Pedido, Zona], helpers, test, por ultimo el main.)
-
 SISTEMA DE GESTIÓN DE PEDIDOS A DOMICILIO
 
+(Si se va a leer el codigo completo re comiendo este orden: include, db.h, estructuras [la carpeta de helpers y las clases de esta carpeta se pueden ignorar].
+seguido de src, db, clases [Cliente, Domiciliario, Restaurante, Pedido, Zona], helpers, test, por ultimo el main.)
+
 DESCRIPCIÓN DEL SISTEMA
+
 El sistema simula el ciclo de vida completo de un pedido, desde su creación en un restaurante hasta su entrega final por un domiciliario.
 Se basa en el uso de estructuras de datos dinámicas para gestionar las relaciones complejas entre clientes, restaurantes, zonas y el flujo de los pedidos.
 
@@ -35,12 +35,11 @@ ROLES Y ENTIDADES PRINCIPALES
     Estructura de Almacenamiento: Pila (Pila).
 
 INSTRUCCIONES DE USO
+
 El sistema opera a través de una interfaz de consola y sigue un flujo de trabajo predefinido:
 
 1.  Carga Inicial: Al iniciar, la clase DB carga automáticamente Zonas, Domiciliarios, Restaurantes y Clientes de ejemplo.
 2.  Menú Principal: Se presenta el menú con las siguientes opciones clave:
-
-<!-- end list -->
   * Crear nuevo pedido (Opción 3): Permite a un cliente seleccionar un restaurante y sus ítems, encolando el pedido (enqueue).
   * Procesar siguiente pedido (Opción 4):
       * Desencola el pedido activo (dequeue).
@@ -50,6 +49,7 @@ El sistema opera a través de una interfaz de consola y sigue un flujo de trabaj
   * Cancelar último pedido (Opción 6): Utiliza la Pila de acciones para revertir el estado de la última operación significativa.
 
 DECISIONES Y JUSTIFICACIONES TÉCNICAS
+
 Las siguientes estructuras y lógicas fueron elegidas para optimizar la funcionalidad requerida:
 
 1.  Gestión de Entidades y Búsqueda Rápida
@@ -71,7 +71,8 @@ Justificación: La Pila de acciones se utiliza para la función "Deshacer" (Canc
 6.  Cálculo de Tiempo (ETA): El tiempo se calcula usando la fórmula: Tiempo = Distancia x FactorVelocidad. El FactorVelocidad es inherente a cada tipo de vehículo.
 7.  Selección: Se elige al domiciliario que arroje el menor Tiempo Estimado de Llegada (ETA) al restaurante, minimizando el tiempo de espera del pedido.
 8.  Modelado de Zonas (Grafo)
-    La clase Zona utiliza una Lista Circular para almacenar a sus vecinos, junto con la distancia (peso) a cada uno. Esta estructura simple permite modelar las adyacencias de una red geográfica, habilitando la función calcularDistancia.
+    La clase Zona utilizaba una Lista Circular para almacenar a sus vecinos, junto con la distancia (peso) a cada uno. Esta estructura simple permite modelar las adyacencias de una red geográfica, habilitando la función calcularDistancia.
+    Posterioremente ese sistema se actualizo para trabajar con Grafos, especificamente el de Djkstra, lo que redujo el codigo (En teoria no pq se mantuvo el codigo anterior a modo de Documentacion) pero mejoro significativamente
+    el flujo de los pedidos en cuando a el calculo de distancia y tiempo.
 
-(Las Estrcuturas cuentan con la documentacion en sus Metodos y se eliminaron los metodos [vistos en clases
-presenciales o desarrollados a modo de estudio] que no se usaron en el codigo)
+(Las Estrcuturas cuentan con la documentacion en sus Metodos y se eliminaron los metodos [vistos en clases presenciales o desarrollados a modo de estudio] que no se usaron en el codigo)
